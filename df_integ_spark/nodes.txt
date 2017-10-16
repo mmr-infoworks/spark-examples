@@ -1,0 +1,16 @@
+
+Supported
+=================
+1.Filter 
+        TODO Find out supported expressions
+2.Join
+    Potentially advanced expressions may not be supported and may have to be moved in another filter node after this
+    
+
+
+Unsupported
+================
+1.Exists --> Need to convert into a join
+2.In/Not in --> Need to convert into a join
+3.Cleanse --> TODO
+4.Split ---> TODO

@@ -1,0 +1,41 @@
+Code
+=============
+    Column column = emp.col("deptId").equalTo(dept.col("id"));
+    Column column1 = emp.col("age").gt(19);
+    Dataset<Row> joined = emp.join(dept, column.$amp$amp(column1)
+      ,"inner");
+
+Result
+==============
+{"age":50,"deptId":1,"name":"Michael","dname":"dept1","id":1}
+filtered Andy due to dept join and Justin due to age
+
+Plan
+===================
+== Parsed Logical Plan ==
+Join Inner, ((deptId#1L = id#8L) && (age#0L > cast(19 as bigint)))
+:- Relation[age#0L,deptId#1L,name#2] json
++- Relation[dname#7,id#8L] json
+
+== Analyzed Logical Plan ==
+age: bigint, deptId: bigint, name: string, dname: string, id: bigint
+Join Inner, ((deptId#1L = id#8L) && (age#0L > cast(19 as bigint)))
+:- Relation[age#0L,deptId#1L,name#2] json
++- Relation[dname#7,id#8L] json
+
+== Optimized Logical Plan ==
+Join Inner, (deptId#1L = id#8L)
+:- Filter ((isnotnull(age#0L) && (age#0L > 19)) && isnotnull(deptId#1L))
+:  +- Relation[age#0L,deptId#1L,name#2] json
++- Filter isnotnull(id#8L)
+   +- Relation[dname#7,id#8L] json
+
+== Physical Plan ==
+*BroadcastHashJoin [deptId#1L], [id#8L], Inner, BuildRight
+:- *Project [age#0L, deptId#1L, name#2]
+:  +- *Filter ((isnotnull(age#0L) && (age#0L > 19)) && isnotnull(deptId#1L))
+:     +- *FileScan json [age#0L,deptId#1L,name#2] Batched: false, Format: JSON, Location: InMemoryFileIndex[file:/Users/manoharm/infoworks/spark/examples/input/emp.json], PartitionFilters: [], PushedFilters: [IsNotNull(age), GreaterThan(age,19), IsNotNull(deptId)], ReadSchema: struct<age:bigint,deptId:bigint,name:string>
++- BroadcastExchange HashedRelationBroadcastMode(List(input[1, bigint, true]))
+   +- *Project [dname#7, id#8L]
+      +- *Filter isnotnull(id#8L)
+         +- *FileScan json [dname#7,id#8L] Batched: false, Format: JSON, Location: InMemoryFileIndex[file:/Users/manoharm/infoworks/spark/examples/input/dept.json], PartitionFilters: [], PushedFilters: [IsNotNull(id)], ReadSchema: struct<dname:string,id:bigint>

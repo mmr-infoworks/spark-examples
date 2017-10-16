@@ -1,0 +1,26 @@
+**/target/
+.project
+.settings/
+/sampler/nbproject/
+/server/nbproject/
+nb-configuration*
+nbproject*
+.DS_Store
+
+# Compiled Source #
+###################
+*.class
+*.pig
+*.hive
+*.swp
+*.settings
+*.prefs
+*.manifest
+
+# IDE Files #
+#############
+.idea/
+*.iml
+*.project
+*.classpath
+

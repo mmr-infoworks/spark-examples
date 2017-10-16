@@ -1,0 +1,15 @@
+
+ Code
+   //Target.getInstance().write(filtered,Format.JSON,"/Users/manoharm/infoworks/spark/examples/output/filteredemp.json");
+    Column columnExpr = new Column("deptId = id and age > 19");
+
+    Dataset<Row> joined = emp.join(dept,columnExpr
+      ,"inner");
+Exception in thread "main" org.apache.spark.sql.AnalysisException: cannot resolve '`deptId = id and age > 19`' given input columns: [name, dname, id, age, deptId];;
+'Join Inner, 'deptId = id and age > 19
+:- Relation[age#0L,deptId#1L,name#2] json
++- Relation[dname#7,id#8L] json
+
+Need to figure out how to use an expression directly in join
+
+

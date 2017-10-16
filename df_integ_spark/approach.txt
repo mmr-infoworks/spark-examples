@@ -1,0 +1,10 @@
+TaskexecutorFactory --> create new executor for spark ( will need one for selects  one for complete batch etc)
+create a tasknode for running spark datafram operation
+SqlGenerator should probably be renamed as TaskNodeGenerator and made generic
+SqlGenerator
+    TaskNode taskNode = null;
+    TranslatorContext translatorContext = new TranslatorContext(requestContext, dag); // probably should use a factory for translatorcontext
+    a spark based translatorcontexte should contain some dataframecontainer object which stores dataframe from previous nodes ( possible a map of nodeId to Dataframe)
+    each translator should potentialy create a dataframe/multiple dataframes encapuslated in dataframecontainer
+
+    

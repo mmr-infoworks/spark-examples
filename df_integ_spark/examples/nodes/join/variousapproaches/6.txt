@@ -1,0 +1,47 @@
+    Column column = emp.col("deptId").equalTo(dept.col("id"));
+    Column column1 = emp.col("age").gt(19);
+    Column column2 = dept.col("id").equalTo(2);
+    Dataset<Row> joined = emp.join(dept.where("id = 2"),column
+      ,"left").where(column1);
+    joined.explain(true );
+
+Result:
+============
+
+{"age":50,"deptId":1,"name":"Michael"}
+{"age":30,"deptId":2,"name":" Andy "}
+
+Plan
+=============
+
+== Parsed Logical Plan ==
+'Filter (age#0L > 19)
++- Join LeftOuter, (deptId#1L = id#8L)
+   :- Relation[age#0L,deptId#1L,name#2] json
+   +- Filter (id#8L = cast(2 as bigint))
+      +- Relation[dname#7,id#8L] json
+
+== Analyzed Logical Plan ==
+age: bigint, deptId: bigint, name: string, dname: string, id: bigint
+Filter (age#0L > cast(19 as bigint))
++- Join LeftOuter, (deptId#1L = id#8L)
+   :- Relation[age#0L,deptId#1L,name#2] json
+   +- Filter (id#8L = cast(2 as bigint))
+      +- Relation[dname#7,id#8L] json
+
+== Optimized Logical Plan ==
+Join LeftOuter, (deptId#1L = id#8L)
+:- Filter (isnotnull(age#0L) && (age#0L > 19))
+:  +- Relation[age#0L,deptId#1L,name#2] json
++- Filter (isnotnull(id#8L) && (id#8L = 2))
+   +- Relation[dname#7,id#8L] json
+
+== Physical Plan ==
+*BroadcastHashJoin [deptId#1L], [id#8L], LeftOuter, BuildRight
+:- *Project [age#0L, deptId#1L, name#2]
+:  +- *Filter (isnotnull(age#0L) && (age#0L > 19))
+:     +- *FileScan json [age#0L,deptId#1L,name#2] Batched: false, Format: JSON, Location: InMemoryFileIndex[file:/Users/manoharm/infoworks/spark/examples/input/emp.json], PartitionFilters: [], PushedFilters: [IsNotNull(age), GreaterThan(age,19)], ReadSchema: struct<age:bigint,deptId:bigint,name:string>
++- BroadcastExchange HashedRelationBroadcastMode(List(input[1, bigint, true]))
+   +- *Project [dname#7, id#8L]
+      +- *Filter (isnotnull(id#8L) && (id#8L = 2))
+         +- *FileScan json [dname#7,id#8L] Batched: false, Format: JSON, Location: InMemoryFileIndex[file:/Users/manoharm/infoworks/spark/examples/input/dept.json], PartitionFilters: [], PushedFilters: [IsNotNull(id), EqualTo(id,2)], ReadSchema: struct<dname:string,id:bigint>

@@ -1,0 +1,3 @@
+  Dataset<Row> emp = Source.getInstance().getSource(Format.JSON,"/Users/manoharm/infoworks/spark/examples/input/emp.json");
+    Dataset<Row> dept = Source.getInstance().getSource(Format.JSON,"/Users/manoharm/infoworks/spark/examples/input/dept.json");
+    Dataset<Row> filtered = emp.filter(" trim(name) =  'Andy'");

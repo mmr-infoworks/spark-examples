@@ -1,0 +1,46 @@
+   Column column = emp.col("deptId").equalTo(dept.col("id"));
+    Column column1 = emp.col("age").gt(19);
+    Column column2 = dept.col("id").equalTo(2);
+    Dataset<Row> joined = emp.join(dept,column
+      ,"left").where(column1).where(column2);
+    joined.explain(true );
+Result:
+============
+no records filtered everything.
+Seems  dept.col("id").equalTo(2) ran "AFTER " join and not "WITHIN" LeftOuter conditions
+
+
+Plan
+===================    
+
+== Parsed Logical Plan ==
+'Filter (id#8L = 2)
++- Filter (age#0L > cast(19 as bigint))
+   +- Join LeftOuter, (deptId#1L = id#8L)
+      :- Relation[age#0L,deptId#1L,name#2] json
+      +- Relation[dname#7,id#8L] json
+
+== Analyzed Logical Plan ==
+age: bigint, deptId: bigint, name: string, dname: string, id: bigint
+Filter (id#8L = cast(2 as bigint))
++- Filter (age#0L > cast(19 as bigint))
+   +- Join LeftOuter, (deptId#1L = id#8L)
+      :- Relation[age#0L,deptId#1L,name#2] json
+      +- Relation[dname#7,id#8L] json
+
+== Optimized Logical Plan ==
+Join Inner, (deptId#1L = id#8L)
+:- Filter (((isnotnull(age#0L) && (age#0L > 19)) && (deptId#1L = 2)) && isnotnull(deptId#1L))
+:  +- Relation[age#0L,deptId#1L,name#2] json
++- Filter (isnotnull(id#8L) && (id#8L = 2))
+   +- Relation[dname#7,id#8L] json
+
+== Physical Plan ==
+*BroadcastHashJoin [deptId#1L], [id#8L], Inner, BuildRight
+:- *Project [age#0L, deptId#1L, name#2]
+:  +- *Filter (((isnotnull(age#0L) && (age#0L > 19)) && (deptId#1L = 2)) && isnotnull(deptId#1L))
+:     +- *FileScan json [age#0L,deptId#1L,name#2] Batched: false, Format: JSON, Location: InMemoryFileIndex[file:/Users/manoharm/infoworks/spark/examples/input/emp.json], PartitionFilters: [], PushedFilters: [IsNotNull(age), GreaterThan(age,19), EqualTo(deptId,2), IsNotNull(deptId)], ReadSchema: struct<age:bigint,deptId:bigint,name:string>
++- BroadcastExchange HashedRelationBroadcastMode(List(input[1, bigint, true]))
+   +- *Project [dname#7, id#8L]
+      +- *Filter (isnotnull(id#8L) && (id#8L = 2))
+         +- *FileScan json [dname#7,id#8L] Batched: false, Format: JSON, Location: InMemoryFileIndex[file:/Users/manoharm/infoworks/spark/examples/input/dept.json], PartitionFilters: [], PushedFilters: [IsNotNull(id), EqualTo(id,2)], ReadSchema: struct<dname:string,id:bigint>
