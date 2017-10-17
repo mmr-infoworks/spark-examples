@@ -24,6 +24,12 @@ public class Source {
       case JSON:
           dataset = spark.read().json(path);
           break;
+      case CSV:
+          dataset = spark.read().option("header", true).option("inferSchema", true).csv(path);
+          break;
+      case ORC:
+          dataset = spark.read().option("header", true).option("inferSchema", true).orc(path);
+          break;
       default:
         throw new RuntimeException(" format not supported "+ format);
 

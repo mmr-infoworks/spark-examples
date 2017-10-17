@@ -1,0 +1,4 @@
+Listed various trials in join
+TODO The extra advanced condition are probably better off written similar to approach 6
+TODO Will need to test out other joins such as right , full outer etc
+TODO How df parser figures out right table ,left table columns etc.How it 
