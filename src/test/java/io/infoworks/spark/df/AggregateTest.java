@@ -75,7 +75,7 @@ public class AggregateTest extends BaseTest{
   @Test
   public void aggColumn2OMaxSumetc() {
     /***
-     * select count(*) ,ss_customer_sk,ss_store_sk, sum(ss_sales_price) , max(ss_ext_discount_amt) from store_sales
+     * select count(*) ,ss_customer_sk,ss_store_sk, sum(ss_sales_price) , max(ss_ext_discount_amt) from store_sales group by ss_customer_sk,ss_store_sk
 
      +------+-----------------+--------------+---------+----------+--+
      | _c0  | ss_customer_sk  | ss_store_sk  |   _c3   |   _c4    |
@@ -138,6 +138,35 @@ public class AggregateTest extends BaseTest{
 
   @Test
   public void aggrUsingComplexExpression() {
+    /**
+     *  select count(*) ,ss_customer_sk + 1 ,ss_store_sk/2, sum(ss_sales_price) / max(ss_ext_discount_amt)
+     from store_sales group by ss_customer_sk + 1,ss_store_sk/2;
+
+     +------+--------+-------+---------------+--+
+     | _c0  |  _c1   |  _c2  |      _c3      |
+     +------+--------+-------+---------------+--+
+     | 2    | NULL   | NULL  | NULL          |
+     | 1    | NULL   | 4     | NULL          |
+     | 11   | 11684  | 4     | 0.3056342867  |
+     | 1    | 35460  | 1     | NULL          |
+     | 10   | 39336  | 5     | 0.8191967348  |
+     | 14   | 40892  | 4     | 0.5606710357  |
+     | 11   | 60435  | 0.5   | 0.2008913891  |
+     +------+--------+-------+---------------+--+
+     7 rows selected (10.047 seconds)
+     */
+
+    Expression aggColExpr = spark.sessionState().sqlParser().parseExpression("sum(ss_sales_price )/ max(ss_ext_discount_amt)");
+    Expression groupByColExpr1 = spark.sessionState().sqlParser().parseExpression("ss_customer_sk + 1");
+    Expression groupByColExpr2 = spark.sessionState().sqlParser().parseExpression("ss_store_sk/2");
+    Column aggCol = new Column(aggColExpr);
+    Column groupByCol1 = new Column(groupByColExpr1);
+    Column groupByCol2 = new Column(groupByColExpr2);
+    Dataset<Row> df = store_sales.groupBy(groupByCol1,groupByCol2).agg(aggCol);
+    df.show();
+
+    List<Row> rows = df.collectAsList();
+
 
   }
 }

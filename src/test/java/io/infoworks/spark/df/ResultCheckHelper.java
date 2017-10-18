@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
  */
 public class ResultCheckHelper {
 
+  /**
+   *   TODO ideally we want to compare value of floats , ints etc.
+   *   Current I am converting value to string which potentially has issues
+   */
   public static Map<String,String> makeMap(List<Row> rows, List<Integer> keyCols , List<Integer> valueCols) {
     Map<String,String> resultMap = new HashMap<>();
     for (Row row : rows) {
@@ -28,7 +32,10 @@ public class ResultCheckHelper {
     }
     return resultMap;
   }
-  public static boolean compareMap(Map<String,String> expected ,Map<String,String> result )  {
+  public static <T> boolean compareMap(Map<String,T> expected ,Map<String,T> result )  {
+
+    //TODO add special float/decimal check
     return expected.equals(result);
   }
+
 }

@@ -1,0 +1,94 @@
+
+Below is the high level items planned for spark support from DF for jan release
+
+1. Spark support will be taken up as an individual engine 
+   and not primary meant to interoperate with HIVE .
+   Many features of hive and spark can be interoperable , but others such as hive bucketing vs spark bucketing are non compatible
+   We will keep documenting known issues here
+   https://docs.google.com/document/d/1llA6ieA4DNic2kv0Pzz7T2G--3Oxa4-vIKIgbWQZxZc/edit ( will keep adding to this)
+
+   Advice to customers would either use Hive or Spark as their engine and not change 
+
+2.Hive datasource will be given  priority since ingestion writes to Hive Tables.
+  There are compatibility issues with Hive which will be documented.
+    SaveMode supported is APPEND and overwrite
+     Need to design how to support MERGE ( similar to current implementation,need to spawn multiple queries ( full outer join with current and delta table) and run hdfs move )
+3.Other sources like CSV , JSON etc can also be supported  . Note : If target is also CSV , JSON , potentially only overwrite and APPEND maybe supported   
+        UI effort also needed for supporting other formats
+4. Backend spark api options
+  Use spark sql :   
+     Pros : Easier to implement for hive use cases
+     Cons : Will be harder to implement new features such as extra source, generic node, streaming etc
+  Use spark dataframe api :
+     Pros : Lends itself well for future support of generic node, streaming , beam integration etc
+     Cons : Tougher to implement. Some current nodes advanced expression mode etc may not be supported
+     in first release
+  We are planning to go for spark dataframe api considering future requirements
+
+
+Following is the nodes that are supported in DF and considerations that we need to take for spark implementation
+
+
+1.Filter 
+        TODO Find out supported expressions and document them . Most likely all hive expressions should be supported.
+
+2.Join
+    TODO Potentially advanced expressions may not be supported for initial release 
+     Having where clause in left outer join , right outer join etc may need 
+     to be split into join api plus filter api  . DF will need to handle this seemlessly unknown to user
+    
+      Join with two source having same column etc will need some renames before this. This applies to simple joins as well
+
+3. Aggregate 
+    Advanced expressions has been tested . TODO more testing to see for complex group by expression
+4. Exists 
+    There is no "exists" api in spark dataframe. We will need to implement as LEFT SEMI Join
+    Again Advanced condition of joins limitation might be present. TODO need to check  
+5. Cleanse
+    There is no "Cleanse" api in spark dataframe. We will need to implement as LEFT SEMI Join
+    Again Advanced condition of joins limitation might be present. TODO need to check
+6.  In/NotIn 
+   Again similar to JOIN 
+7. Distinct : dataframe has dropDuplicates api
+8. Union : dataframe has union which does unionall .  for union distinct use case  ,DF should do unionapi plus dropDuplicates applies
+    Potential scope for adding new features such as intersect and minus(except) as spark apis exists
+
+9. Split : dataframe has explodde api 
+  TODO : Need to compare this with hive split to see similarities and dissimilarities
+
+10. Derive : dataframe has select api
+
+11. Spark apis also have Rollup , cube etc which creates a RelationGroupedSet ( output of groupBy api also).
+    This can potentially be used for pivot queries in future releases
+
+12. Column exclude : drop api
+Essentialy for most apis above , dataframe takes "Column" a column can be constructed
+as new Column(expr) , where expr = catalyst.parseExpression(" col1 + col2 ") etc. 
+This is what takes care of advanced mode for DF. We will need to test for complex cases such as joins etc
+
+1
+
+Main design considerations
+=========================
+
+DF Backend
+=============
+1.MERGE Support needs to be thought through well. 
+How to generically use this to support multiple format of source and target ( is this possible?)
+2.Advanced expression mode needs to be tested with complex nodes such as joins
+3.General refactoring of code to support dataframe apis and potentially new sources
+4.Design considerations for future generic node support,streaming support etc
+
+UI
+========
+1.General refactoring of code and UI experience for supporting different formats for source and target
+2.Support new features  ,disable certain features for different engines ( eg spark may not support advanced mode in join but may add new intersect feature for union node)
+3.streaming considerations for later releases : Discuss on how the UX will look like 
+
+
+
+
+
+    
+
+ 

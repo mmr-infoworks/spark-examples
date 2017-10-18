@@ -8,7 +8,7 @@ import org.junit.Test;
 public class JoinTest extends BaseTest {
 
   @Test
-  public void InnerJoin() {
-
+  public void InnerJoin1() {
+      store.printSchema();
   }
 }
