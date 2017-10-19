@@ -45,11 +45,11 @@ public class BaseTest {
     emp = Source.getInstance().getSource(Format.JSON,input("emp.json"));
     dept = Source.getInstance().getSource(Format.JSON,input("dept.json"));
     customer =  Source.getInstance().getSource(Format.ORC,inputDfTpcDs("customer.orc"));
-    store_returns =  Source.getInstance().getSource(Format.CSV,inputDfTpcDs("store_returns.csv"));
-    customer_address =  Source.getInstance().getSource(Format.CSV,inputDfTpcDs("customer_address.csv"));
+    store_returns =  Source.getInstance().getSource(Format.ORC,inputDfTpcDs("store_returns.orc"));
+    customer_address =  Source.getInstance().getSource(Format.ORC,inputDfTpcDs("customer_address.ORC"));
     store =  Source.getInstance().getSource(Format.ORC,inputDfTpcDs("store.orc"));
     store_sales =  Source.getInstance().getSource(Format.ORC,inputDfTpcDs("store_sales.orc"));
-    inventory =  Source.getInstance().getSource(Format.CSV,inputDfTpcDs("inventory.csv"));
+    inventory =  Source.getInstance().getSource(Format.ORC,inputDfTpcDs("inventory.orc"));
   }
 
   public static String input(String file) {

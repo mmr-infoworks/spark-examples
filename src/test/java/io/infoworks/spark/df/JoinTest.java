@@ -157,9 +157,9 @@ public class JoinTest extends BaseTest {
     Dataset<Row> selected = joined.select(col1,col2);
     List<Row> selectedList = selected.collectAsList();
 
-    Map<String,String> resultMap  = ResultCheckHelper.makeMap(selectedList, Arrays.asList(0,1),Arrays.asList(0,1));
      assert (selectedList.size()==50);
     //TODO fix the float check
+    Map<String,String> resultMap  = ResultCheckHelper.makeMap(selectedList, Arrays.asList(0,1),Arrays.asList(0,1));
     // assert (ResultCheckHelper.compareMap(expectedMap,resultMap));
 
   }
