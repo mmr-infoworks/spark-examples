@@ -43,4 +43,7 @@ public class DeriveTest extends BaseTest {
     Map<String,String> resultMap = ResultCheckHelper.makeMap(resultList, Arrays.asList(0),Arrays.asList(1));
     assert (ResultCheckHelper.compareMap(expectedMap,resultMap));
   }
+
+  //TODO test some UDFS in spark and other advanced function
+
 }
