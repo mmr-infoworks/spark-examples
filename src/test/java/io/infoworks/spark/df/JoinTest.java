@@ -51,13 +51,11 @@ public class JoinTest extends BaseTest {
   public void innerJoin2() {
     /***
      * select count(*) from store s join store_sales ss on s.s_store_sk = ss.ss_store_sk and s.s_store_sk > 7;
-
      +------+--+
      | _c0  |
      +------+--+
      | 36   |
      +------+--+
-     1 row selected (9.237 seconds)
      */
     Column joinCond = getColumnFromExp(spark,"store_s_store_sk = store_sales_ss_store_sk and store_s_store_sk > 7");
     Dataset<Row> joined = storeRenamed.join(storesalesRenamed,joinCond,"inner");
@@ -71,7 +69,6 @@ public class JoinTest extends BaseTest {
     /***
      * select count(*) from store s left join store_sales ss on s.s_store_sk = ss.ss_store_sk
      and ss.ss_store_sk =1000;
-
      +------+--+
      | _c0  |
      +------+--+
@@ -90,7 +87,6 @@ public class JoinTest extends BaseTest {
     /***
      * select count(*) from store s left join store_sales ss on s.s_store_sk = ss.ss_store_sk
      and ss.ss_store_sk =1000;
-
      +------+--+
      | _c0  |
      +------+--+
@@ -110,7 +106,6 @@ public class JoinTest extends BaseTest {
      select ss.ss_customer_sk, (ss.ss_item_sk * ss.ss_customer_sk )/10 from store s
      right join  store_sales ss on s.s_store_sk = ss.ss_store_sk
      and ss.ss_store_sk > 1000 and trim(s.ziw_status_flag) = 'I';
-
      +--------------------+--------------+--+
      | ss.ss_customer_sk  |     _c1      |
      +--------------------+--------------+--+
@@ -154,6 +149,7 @@ public class JoinTest extends BaseTest {
 
 
   private Dataset<Row> getRenamedDf(Dataset<Row> df,String prefix) {
+    // renames all columns by applying prefix
     String[] columns = df.columns();
     Dataset<Row> dfRenamed = df;
     for (String col:columns) {
