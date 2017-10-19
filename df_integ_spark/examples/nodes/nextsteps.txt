@@ -1,12 +1,14 @@
 Next steps to do in spark integration in  order of priority
 1. Integrate https://github.com/mmr-infoworks/spark-examples to awb repo 
    into feature/spark branch
-2. Add more test case especially for
+2. Add more test case 
+   Fix ResultCheckHelper for adding helper function for float data type
+   especially for
    Join :   Try complex joins with advanced expression left outer , right outer etc 
    Groupby : Complex advance groupbys, understand supported aggregation functios 
    Derive  : Similar to above
    Column Rename
 
-3.Tests are currently runnign with Junit Runner  . Try to change this to PowerMock runner as with 
+3.Tests are currently running with Junit Runner  . Try to change this to PowerMock runner as with 
   other awb test classes. ( I ran into some issues . You will need to google)   
 
