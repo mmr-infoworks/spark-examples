@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.infoworks.spark.df.ResultCheckHelper.compareMap;
+import static io.infoworks.spark.df.ResultCheckHelper.makeMap;
 
 /**
  * Created by manoharm on 18/10/17.
@@ -40,8 +42,8 @@ public class DeriveTest extends BaseTest {
     Column deriveColumn = new Column(deriveExpr);
     Column normal = new Column("c_customer_sk");
     List<Row> resultList = customer.select(normal,deriveColumn).collectAsList();
-    Map<String,String> resultMap = ResultCheckHelper.makeMap(resultList, Arrays.asList(0),Arrays.asList(1));
-    assert (ResultCheckHelper.compareMap(expectedMap,resultMap));
+    Map<String,String> resultMap = makeMap(resultList, Arrays.asList(0),Arrays.asList(1));
+    assert (compareMap(expectedMap,resultMap));
   }
 
   //TODO test some UDFS in spark and other advanced function

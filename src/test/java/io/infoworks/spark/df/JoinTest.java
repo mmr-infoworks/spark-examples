@@ -49,9 +49,6 @@ public class JoinTest extends BaseTest {
 
   @Test
   public void innerJoin2() {
-    storeRenamed.printSchema();
-    storesalesRenamed.printSchema();
-
     /***
      * select count(*) from store s join store_sales ss on s.s_store_sk = ss.ss_store_sk and s.s_store_sk > 7;
 
@@ -71,9 +68,6 @@ public class JoinTest extends BaseTest {
 
   @Test
   public void leftJoin1() {
-    storeRenamed.printSchema();
-    storesalesRenamed.printSchema();
-
     /***
      * select count(*) from store s left join store_sales ss on s.s_store_sk = ss.ss_store_sk
      and ss.ss_store_sk =1000;
@@ -93,9 +87,6 @@ public class JoinTest extends BaseTest {
 
   @Test
   public void leftJoin2() {
-    storeRenamed.printSchema();
-    storesalesRenamed.printSchema();
-
     /***
      * select count(*) from store s left join store_sales ss on s.s_store_sk = ss.ss_store_sk
      and ss.ss_store_sk =1000;
@@ -115,9 +106,6 @@ public class JoinTest extends BaseTest {
 
   @Test
   public void rightJoin1() {
-    storeRenamed.printSchema();
-    storesalesRenamed.printSchema();
-
     /***
      select ss.ss_customer_sk, (ss.ss_item_sk * ss.ss_customer_sk )/10 from store s
      right join  store_sales ss on s.s_store_sk = ss.ss_store_sk
