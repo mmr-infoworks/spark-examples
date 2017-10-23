@@ -1,6 +1,7 @@
 **/target/
 .project
 .settings/
+sparkobs/
 /sampler/nbproject/
 /server/nbproject/
 nb-configuration*
