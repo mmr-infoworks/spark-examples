@@ -1,0 +1,57 @@
+SPARK ONLY
+df.bucketby()
+
+ part-r-00000-bc63a7e7-bc9c-4631-8241-5cff3891ca51_00001.snappy.orc
+ part-r-00001-bc63a7e7-bc9c-4631-8241-5cff3891ca51_00000.snappy.orc
+ part-r-00001-bc63a7e7-bc9c-4631-8241-5cff3891ca51_00001.snappy.orc
+ part-r-00001-bc63a7e7-bc9c-4631-8241-5cff3891ca51_00002.snappy.orc
+ part-r-00002-bc63a7e7-bc9c-4631-8241-5cff3891ca51_00000.snappy.orc
+ part-r-00002-bc63a7e7-bc9c-4631-8241-5cff3891ca51_00002.snappy.orc
+ part-r-00003-bc63a7e7-bc9c-4631-8241-5cff3891ca51_00000.snappy.orc
+ part-r-00003-bc63a7e7-bc9c-4631-824
+
+ziw_0 /
+ part-r-00001-bc63a7e7-bc9c-4631-8241-5cff3891ca51_00000.snappy.orc
+ part-r-00002-bc63a7e7-bc9c-4631-8241-5cff3891ca51_00000.snappy.orc
+
+
+TODO // 
+1.Option 1 .
+Move to ziw_0 directory .
+Test out whether bucketing optimization still works
+via explain query or timing
+
+2.Option 2
+Dont move to different directory
+while reading df im merge : Give list of files with pattern for partitioned dataframe
+
+
+
+
+
+HIVE SUPPORT
+
+================
+
+hashes dont match. Bucketing will not work.
+create a ziw_sec_p 
+
+1. No bucketing optimizations will work across SPARK and HIVE
+2. Existing target tables created at CVS will need data migrations to support SPARK. Reading is fine
+   We will need to move current "buckted" ziw_0 structures into a secondary partition.
+   Since ziw_0 will be currently based on hash algorithm of hive which is not compatibile with spark.
+
+TODO Read bucketed table from hive join with bucketed table from spark in SPARK
+
+
+TODO Create Spark sql without cluster by .
+     But when you write dataframe insert into above table use bucketBy. This will 
+TODO : Find if CLUSTERED by support is there in spark sql itself
+
+df.partitionedBy()
+
+
+
+
+
+

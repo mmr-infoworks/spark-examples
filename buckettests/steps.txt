@@ -1,0 +1,63 @@
+scala> val source= spark.sql("select * from automation.hivelogger2");
+source: org.apache.spark.sql.DataFrame = [c_customer_sk: decimal(38,0), c_customer_id: string ... 74 more fields]
+
+
+source.write.format("orc").partitionBy("c_preferred_cust_flag").bucketBy(3,"ziw_row_id").saveAsTable("testpartitionbucket")
+files:
+        hdfs dfs -ls /apps/hive/warehouse/testpartitionbucket/c_preferred_cust_flag=N/
+        Found 20 items
+        -rw-r--r--   3 ec2-user hdfs     966213 2017-11-03 06:55 /apps/hive/warehouse/testpartitionbucket/c_preferred_cust_flag=N/part-r-00000-32e8e85e-3113-4459-a998-36ca62e73976_00000.snappy.orc
+        -rw-r--r--   3 ec2-user hdfs     883589 2017-11-03 06:56 /apps/hive/warehouse/testpartitionbucket/c_preferred_cust_flag=N/part-r-00000-32e8e85e-3113-4459-a998-36ca62e73976_00001.snappy.orc
+
+source.write.format("orc").bucketBy(3,"ziw_row_id").saveAsTable("testbucket")
+files:
+        hdfs dfs -ls /apps/hive/warehouse/testbucket/
+        -rw-r--r--   3 ec2-user hdfs    2899658 2017-11-03 07:11 /apps/hive/warehouse/testbucket/part-r-00000-2ff955ed-b05d-4099-91a5-a832b62e1529_00002.snappy.orc
+        -rw-r--r--   3 ec2-user hdfs     951814 2017-11-03 07:11 /apps/hive/warehouse/testbucket/part-r-00001-2ff955ed-b05d-4099-91a5-a832b62e1529_00000.snappy.orc
+        -rw-r--r--   3 ec2-user hdfs    1020205 2017-11-03 07:11 /apps/hive/warehouse/testbucket/part-r-00001-2ff955ed-b05d-4099-91a5-a832b62e1529_00001.snappy.orc
+
+source.write.format("orc").partitionBy("c_preferred_cust_flag").saveAsTable("testpartitionnobucket")
+files:
+        hdfs dfs -ls /apps/hive/warehouse/testpartitionnobucket/c_preferred_cust_flag=N
+        Found 14 items
+        -rw-r--r--   3 ec2-user hdfs    2108073 2017-11-03 06:59 /apps/hive/warehouse/testpartitionnobucket/c_preferred_cust_flag=N/part-r-00000-62133949-2c4b-41b3-9803-18e404ea521b.snappy.orc
+        -rw-r--r--   3 ec2-user hdfs    1957621 2017-11-03 07:00 /apps/hive/warehouse/testpartitionnobucket/c_preferred_cust_flag=N/part-r-00001-62133949-2c4b-41b3-9803-18e404ea521b.snappy.orc
+
+source.write.format("orc").saveAsTable("testnobucket")
+files:
+        hdfs dfs -ls /apps/hive/warehouse/testnobucket/
+        -rw-r--r--   3 ec2-user hdfs    1631135 2017-11-03 07:10 /apps/hive/warehouse/testnobucket/part-r-00000-d361e62f-2813-4f36-9f0b-e0cf6e5f8a28.snappy.orc
+        -rw-r--r--   3 ec2-user hdfs     804258 2017-11-03 07:09 /apps/hive/warehouse/testnobucket/part-r-00001-d361e62f-2813-4f36-9f0b-e0cf6e5f8a28.snappy.orc
+ 
+
+val testpartitionbucket  = spark.sql("select * from testpartitionbucket")
+testpartitionbucket.filter("ziw_row_id = '91c36e90096e5b5b6d5de85077018406'").take(10)
+plan - testpartitionbucket.htm
+
+
+val testbucket  = spark.sql("select * from testbucket")
+testbucket.filter("ziw_row_id = '91c36e90096e5b5b6d5de85077018406'").take(10)
+plan - testbucket.htm
+       testbucketnorow.htm (nonexisting rowid filter)
+
+
+val testpartitionnobucket  = spark.sql("select * from testpartitionnobucket")
+testpartitionnobucket.filter("ziw_row_id = '91c36e90096e5b5b6d5de85077018406'").take(10)
+plan - testpartitionnobucket.htm
+
+
+val testnobucket  = spark.sql("select * from testnobucket")
+testnobucket.filter("ziw_row_id = '91c36e90096e5b5b6d5de85077018406'").take(10)
+plan - testnobucket.htm
+
+
+
+
+testpartitionbucket.filter("ziw_row_id = '91c36e90096e5b5b6dhihih5de85077018406'").take(10)
+testnobucket.filter("ziw_row_id = '91c36e90096e5b5b6dhihih5de85077018406'").take(10)
+
+
+testbucket.filter("ziw_row_id = '91c36e90096e5b5b6d5jhihide85077018406'").take(10)
+
+after reorganising folder structure
+==============================

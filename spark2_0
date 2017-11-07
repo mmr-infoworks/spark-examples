@@ -1,0 +1,19 @@
+
+bucketed table
+val df2 = spark.sql("select *   from testbucket2");
+scala> df2.filter("ziw_row_id = '91c36e90096e5b5b6d5de85077018406'").take(10)
+res15: Array[org.apache.spark.sql.Row] = Array([99952,AAAAAAAAAHGIBAAA,751340,4370,8153,2451505,2451475,Steven              ,Finley                        ,2,10,1955,TUNISIA,null,Steven.Finley@9.edu                               ,2452398   ,99999,AAAAAAAAPJGIBAAA,1641963,292,15421,2452000,2451970,Mr.       ,Rex                 ,Reyes                         ,N,9,7,1981,GREECE,null,Rex.Reyes@saLGsYab.org                            ,2452297   ,99999,AAAAAAAAPJGIBAAA,1641963,292,15421,2452000,2451970,Mr.       ,Rex                 ,Reyes                         ,N,9,7,1981,GREECE,null,Rex.Reyes@saLGsYab.org                            ,2452297   ,99999,AAAAAAAAPJGIBAAA,1641963,292,15421,2452000,2451970,Mr.       ,Rex                 ,Reyes                         ,N,9,7,1981,GREECE,null,Rex...
+
+plan - plan1.htm
+
+
+val df2 = spark.sql("select *   from testnobucket");
+
+df2.filter("ziw_row_id = '91c36e90096e5b5b6d5de85077018406'").take(10)
+
+plan = plan2.htm
+
+after changing directory location
+
+val df = spark.sql("select *   from testbucket");
+scala> df.filter("ziw_row_id = '91c36e90096e5b5b6d5de85077018406'").take(10)

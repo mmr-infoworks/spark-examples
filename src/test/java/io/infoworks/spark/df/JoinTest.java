@@ -3,6 +3,7 @@ package io.infoworks.spark.df;
 import org.apache.spark.sql.Column;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan;
 import org.junit.Before;
 import org.junit.Test;
 import org.stringtemplate.v4.ST;
@@ -131,7 +132,7 @@ public class JoinTest extends BaseTest {
     for (String key : keys) {
       expectedMap.put(key,key);
     }
-     Column joinCond = getColumnFromExp(spark,
+    Column joinCond = getColumnFromExp(spark,
       "store_s_store_sk = store_sales_ss_store_sk and store_sales_ss_store_sk > 1000 " +
         "and trim(store_ziw_status_flag) = 'I'");
     Dataset<Row> joined = storeRenamed.join(storesalesRenamed,joinCond,"right");
@@ -139,7 +140,8 @@ public class JoinTest extends BaseTest {
     Column col2 = getColumnFromExp(spark,"(store_sales_ss_item_sk * store_sales_ss_customer_sk )/10");
     Dataset<Row> selected = joined.select(col1,col2);
     List<Row> selectedList = selected.collectAsList();
-
+     LogicalPlan plan = selected.logicalPlan();
+    System.out.printf("plan:"+plan.canonicalized().toString());
      assert (selectedList.size()==50);
     //TODO fix the float check
     Map<String,String> resultMap  = ResultCheckHelper.makeMap(selectedList, Arrays.asList(0,1),Arrays.asList(0,1));

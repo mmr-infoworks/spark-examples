@@ -1,5 +1,6 @@
 package io.infoworks.spark.df;
 
+import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Column;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -29,6 +30,7 @@ public class BaseTest {
                                        .appName("DF data sources example")
                                        .config("spark.some.config.option", "some-value")
                                        .getOrCreate();
+SparkConf sparkConf = new SparkConf();
 
   Dataset<Row> emp;
   Dataset<Row> dept;

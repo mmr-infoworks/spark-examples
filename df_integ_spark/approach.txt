@@ -8,3 +8,4 @@ SqlGenerator
     each translator should potentialy create a dataframe/multiple dataframes encapuslated in dataframecontainer
 
     
+∂

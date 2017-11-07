@@ -1,0 +1,54 @@
+Spark Design questions
+========================
+
+1. Hive tables vs Spark Tables.
+   Should pipeline targets  be spark tables or hive tables.
+   Should we provide configuration for hive optmizied vs spark optimized
+
+2.Interactive Mode
+  Should we materialize the intermediate nodes to hdfs ?
+  Or should we just do a take(limit) and show it ?
+
+
+3. Figuring out cutpoint.
+   Thinking of this approach :
+    Currently TranslatorFactory returns MLNodes even if batchengine is Hive.
+    Change this to actual batchengine ( duplicat entries to HIVE , Impala etc for common usage)
+
+     Example ML Nodes will run only with Spark BatchEngine
+     and filter nodes with run with Hive,Spark and Impala engine
+     Store this reverse map somewhere
+     NodeBatchEngineMap (Node -> List<BatchEngine> map)
+
+      BatchPlanner
+        Currentbatchengine = RequestContext.batchengine;    
+         for (PipelineNode outNode : pipelineNodeDag.getOutgoingNodes(node)) {
+      //Check if target nodes match
+      NodeProps outnodeProps = nodeIdToNodePropsMap.get(outNode.getId());
+      if(! NodeBatchEngineMap.get(outNode) contains Currentbatchengine) {
+        nodeProps.setCutPoint(true);
+        Currentbatchengine ( for child of outNodes ) = NodeBatchEngineMap.get(outNode)[0] // preferred batchengine
+        break;
+      }
+
+      store the Currentbatchengine at someplace to be used by TaskNode
+      Change TanslatorFactory.createTranslator(PipelineNode node, TranslatorContext ctxt) to use
+      batchengine at TaskNode level
+
+4.SqlGenerator -- change this to TaskNodeGenerator
+      Add TranslatorContextFactory to get right TranslatorContext 
+
+5. SparkTranslatorContext
+  containe DataFrameContainer which contains (nodeId,DataFrameObject) Map    
+  Individual translators will refer to this and get the input DataFrameObjects and create a new DataFrameObject
+  and add it to the DataFrameContainer
+  DataFrameContainer/DataFrameObject also will log user friendly lineage 
+  ( eg "NodeId doing a filter operation on input DataFrameContainer with expression" 
+     List<Renames> that has occured)    . This will also be used in unit tests ( analogous to sql)
+6. SparkTranslator base class of spark node level translators 
+
+7. TaskExecutorFactory
+     Change  TaskExecutorFactory.getExecutor(TaskNode) to TaskExecutorFactory.getExecutor(TaskNode,BatchEngine)
+        Potentialy have sub factories for BatchQueryExecutor , InteractiveSelectQueryExecutor etc
+        Abstract some common code in some of the TaskExecutors wherever possible across BatchEngines
+     
